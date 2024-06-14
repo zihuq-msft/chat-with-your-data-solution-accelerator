@@ -19,7 +19,7 @@ outputs:
     is_chat_output: true
   citations:
     type: string
-    reference: ${output_parser.output}
+    reference: ${citation_output.output}
 nodes:
 - name: lookup
   type: python

@@ -34,7 +34,7 @@ def my_python_tool(answer: str, sources: dict) -> str:
     answer = _make_doc_references_sequential(answer, doc_ids)
 
     source_documents = sources.get("retrieved_documents", [])
-    citations = []
+    citations = {}
     for i in doc_ids:
         idx = i - 1
 
@@ -42,6 +42,6 @@ def my_python_tool(answer: str, sources: dict) -> str:
             continue
 
         doc = source_documents[idx]
-        citations.append(doc)
+        citations = citations | doc
 
     return answer, citations
