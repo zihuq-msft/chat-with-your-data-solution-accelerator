@@ -106,6 +106,28 @@
       "loading": {
         "strategy": "layout"
       }
+    },
+    {
+      "document_type": "json",
+      "chunking": {
+        "strategy": "structured",
+        "size": 500,
+        "overlap": 100
+      },
+      "loading": {
+        "strategy": "json"
+      }
+    },
+    {
+      "document_type": "csv",
+      "chunking": {
+        "strategy": "structured",
+        "size": 500,
+        "overlap": 100
+      },
+      "loading": {
+        "strategy": "csv"
+      }
     }
   ],
   "integrated_vectorization_config": {

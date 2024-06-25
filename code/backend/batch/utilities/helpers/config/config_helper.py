@@ -68,6 +68,8 @@ class Config:
             "jpg",
             "png",
             "docx",
+            "json",
+            "csv",
         }
         if self.env_helper.USE_ADVANCED_IMAGE_PROCESSING:
             document_types.update(ADVANCED_IMAGE_PROCESSING_FILE_TYPES)
@@ -260,12 +262,11 @@ class ConfigHelper:
 
     @staticmethod
     def _append_advanced_image_processors():
-        image_file_types = ["jpeg", "jpg", "png", "tiff", "bmp"]
-        ConfigHelper._remove_processors_for_file_types(image_file_types)
+        ConfigHelper._remove_processors_for_file_types(ADVANCED_IMAGE_PROCESSING_FILE_TYPES)
         ConfigHelper._default_config["document_processors"].extend(
             [
                 {"document_type": file_type, "use_advanced_image_processing": True}
-                for file_type in image_file_types
+                for file_type in ADVANCED_IMAGE_PROCESSING_FILE_TYPES
             ]
         )
 

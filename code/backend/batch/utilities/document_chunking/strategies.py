@@ -3,6 +3,7 @@ from .layout import LayoutDocumentChunking
 from .page import PageDocumentChunking
 from .fixed_size_overlap import FixedSizeOverlapDocumentChunking
 from .paragraph import ParagraphDocumentChunking
+from .structured import StructuredDocumentChunking
 
 
 def get_document_chunker(chunking_strategy: str):
@@ -14,5 +15,7 @@ def get_document_chunker(chunking_strategy: str):
         return FixedSizeOverlapDocumentChunking()
     elif chunking_strategy == ChunkingStrategy.PARAGRAPH.value:
         return ParagraphDocumentChunking()
+    elif chunking_strategy == ChunkingStrategy.STRUCTURED.value:
+        return StructuredDocumentChunking()
     else:
         raise Exception(f"Unknown chunking strategy: {chunking_strategy}")
