@@ -3,6 +3,8 @@ from .layout import LayoutDocumentLoading
 from .read import ReadDocumentLoading
 from .web import WebDocumentLoading
 from .word_document import WordDocumentLoading
+from .json_document import JsonDocumentLoading
+from .csv_document import CsvDocumentLoading
 
 
 class LoadingStrategy(Enum):
@@ -10,6 +12,8 @@ class LoadingStrategy(Enum):
     READ = "read"
     WEB = "web"
     DOCX = "docx"
+    JSON = "json"
+    CSV = "csv"
 
 
 def get_document_loader(loader_strategy: str):
@@ -21,5 +25,9 @@ def get_document_loader(loader_strategy: str):
         return WebDocumentLoading()
     elif loader_strategy == LoadingStrategy.DOCX.value:
         return WordDocumentLoading()
+    elif loader_strategy == LoadingStrategy.JSON.value:
+        return JsonDocumentLoading()
+    elif loader_strategy == LoadingStrategy.CSV.value:
+        return CsvDocumentLoading()
     else:
         raise Exception(f"Unknown loader strategy: {loader_strategy}")
