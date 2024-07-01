@@ -9,6 +9,17 @@
             "preLaunchTask": "func: host start"
         },
         {
+            "name": "Attach to Python Functions (frozen_modules=off)",
+            "type": "python",
+            "request": "attach",
+            "port": 9091,
+            "args": [
+                "-Xfrozen-modules=off",
+                "--verbose"
+            ],
+            "preLaunchTask": "func: host start"
+        },
+        {
             "name": "Launch Admin site",
             "type": "debugpy",
             "request": "launch",

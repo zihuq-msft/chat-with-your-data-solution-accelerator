@@ -56,11 +56,7 @@ This document outlines the necessary steps and configurations required for setti
     - example: `1`
 
 # Model Configuration
-- To set an environment variable, you can use the following command:
-    - `azd env set <ENVIRONMENT_VARIABLE_NAME> <ENVIRONMENT_VARIABLE_VALUE>`
-
-- To get the value of an environment variable, you can use the following command:
-    - `azd env get <ENVIRONMENT_VARIABLE_NAME>`
+- See the `Set and Get Values` section of the [LOCAL_DEPLOYMENT.md](./LOCAL_DEPLOYMENT.md#set-and-get-values) document for setting up and using evironment variables within the solution.
 
 ## GPT-4o & Text-Embeddings-3-Large
 - The following environment variables are set for the GPT-4o and Text-Embeddings-3-Large models:

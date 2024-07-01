@@ -26,7 +26,7 @@ To apply the suggested configurations in your deployment, update the following f
 - **Azure OpenAI Model Name**: Set `AZURE_OPENAI_MODEL_NAME` to `gpt-4o`. (could be different based on the name of the Azure OpenAI model deployment)
 - **Azure OpenAI Model Name Version**: Set `AZURE_OPENAI_MODEL_VERSION` to `2024-05-13`.
 - **Conversation Flow Options**: Set `CONVERSATION_FLOW` to `byod`
-- **Orchestration Strategy**: Set `ORCHESTRATION_STRATEGY` to `Semantic Kernel`.
+- **Orchestration Strategy**: Set `ORCHESTRATION_STRATEGY` to `semantic_kernel`.
 
 
 ## Admin Configuration

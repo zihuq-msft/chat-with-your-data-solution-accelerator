@@ -21,6 +21,9 @@ Provides the option to use a custom orchestrator to handle the conversation flow
 - [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/)
 - [Langchain](https://python.langchain.com/v0.2/docs/introduction/)
 - [OpenAI Function](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/function-calling)
+- [Prompt Flow](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/prompt-flow)
+
+*Note*: Prompt Flow configuration is still under development and may not be fully functional. Developer may need to do additional configuration to enable this feature.
 
 ### 'On Your Data'
 

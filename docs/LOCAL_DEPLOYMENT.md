@@ -58,7 +58,7 @@ The files for the dev container are located in `/.devcontainer/` folder.
 
 ## Local debugging
 
-To customize the accelerator or run it locally, you must provision the Azure resources by running `azd provision` in a Terminal. This will generate a `.env` for you and you can use the "Run and Debug" (Ctrl + Shift + D) command to chose which part of the accelerator to run.  There is an [environment variable values table](#environment-variables) below.
+To customize the accelerator or run it locally, you must provision the Azure resources by running `azd provision` in a Terminal. This will generate a `.env` for you  in the `/.azure/<env-name>` directory and you can use the "Run and Debug" (Ctrl + Shift + D) command to chose which part of the accelerator to run.  There is an [environment variable values table](#environment-variables) below.
 
 
 To run the accelerator in local when the solution is secured by RBAC you need to assign some roles to your principal id. You can do it either manually or programatically.
@@ -137,7 +137,7 @@ cd code\frontend
 npm install
 npm run dev
 ```
-The local vite server will return a url that you can use to access the chat interface locally, such as  `http://localhost:5174/`.
+The local [Vite](https://vitejs.dev/guide/) server will return a url that you can use to access the chat interface locally, such as  `http://localhost:5174/`.
 
 ### Develop & run the admin app
 
@@ -167,7 +167,19 @@ Copy the .env file from [previous section](#local-debugging) to the `batch` fold
 
 Execute the above [shell command](#L81) to run the function locally. You may need to stop the deployed function on the portal so that all requests are debugged locally. To trigger the function, you can click on the corresponding URL that will be printed to the terminal.
 
+#### Cleaning up after debugging session
+*TODO*: Add instructions to clean up the resources after debugging, since the resources are not cleaned up automatically.
+
 ## Environment variables
+#### Set and Get Values
+- To set an environment variable, you can use the following command:
+    - `azd env set <ENVIRONMENT_VARIABLE_NAME> <ENVIRONMENT_VARIABLE_VALUE>`
+
+- To get the value of an environment variable, you can use the following command:
+    - `azd env get <ENVIRONMENT_VARIABLE_NAME>`
+
+- To list all environment variables, you can use the following command:
+    - `azd env list`
 
 | App Setting | Value | Note |
 | --- | --- | ------------- |

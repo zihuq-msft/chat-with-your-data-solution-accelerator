@@ -34,6 +34,13 @@ If you have previously deployed Chat With Your Data without Integrated Vectoriza
 1. Run the command `azd env set AZURE_SEARCH_USE_INTEGRATED_VECTORIZATION true`
 1. Run `azd up`
 
+    *Note*: This will create an indexer in Azure AI Search resource, which was created with free tier SKU, and therefore has a limit of [20 transactions per indexer invocation per day](https://learn.microsoft.com/en-us/azure/search/cognitive-search-attach-cognitive-services?tabs=portal%2Cportal-remove#set-the-resource-key), and results in a `Time Out` message in the indexer execution history if the limit is exceeded.
+
+    To avoid this, you can either...
+     - Delete the Search service resource and re-run `azd up`*[TODO: This needs to be verified]*
+
+     or
+     - You can upgrade the Search service resource to a paid tier and attach an [Azure AI multi-service resource](https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?pivots=azportal) to it. Check the link for more information on how to attach a multi-service resource to your Azure AI Search service.
 
 ## Local Deployment - If you want to switch back to push-based indexing from Integrated Vectorization
 If you have a deployment with Integrated Vectorization enabled, and you want to disable it, you will need to follow the below steps:

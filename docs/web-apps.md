@@ -24,6 +24,7 @@ Using the **Ingest data** tab, you can add documents and index public web pages 
 |Page   | TBD         |
 |Fixed size overlap     | TBD         |
 |Paragraph     | TBD         |
+|Structured     | TBD         |
 
 You can see the chunks extracted from your files in the **Explore data** tab.
 

@@ -61,3 +61,4 @@ These are the chunking strategy options you can choose from:
 -  **Page**: This strategy involves breaking down long documents into pages.
 - **Fixed-Size Overlap**: This strategy involves defining a fixed size that’s sufficient for semantically meaningful paragraphs (for example, 250 words) and allows for some overlap (for example, 10-25% of the content). This usually helps creating good inputs for embedding vector models. Overlapping a small amount of text between chunks can help preserve the semantic context.
 -  **Paragraph**: This strategy allows breaking down a difficult text into more manageable pieces and rewrite these “chunks” with a summarization of all of them.
+-  **Structured**: This strategy involves breaking down a document into structured sections, such as key-value pairs, tables, or lists.

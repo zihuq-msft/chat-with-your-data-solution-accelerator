@@ -353,6 +353,24 @@ def test_get_default_legal_assistant():
     assert isinstance(legal_assistant_prompt, str)
 
 
+def test_get_default_research_assistant():
+    # when
+    research_assistant_prompt = ConfigHelper.get_default_research_assistant()
+
+    # then
+    assert research_assistant_prompt is not None
+    assert isinstance(research_assistant_prompt, str)
+
+
+def test_get_default_research_assistant():
+    # when
+    research_assistant_prompt = ConfigHelper.get_default_research_assistant()
+
+    # then
+    assert research_assistant_prompt is not None
+    assert isinstance(research_assistant_prompt, str)
+
+
 def test_get_document_processors(config_dict: dict):
     # given
     config_dict["document_processors"] = [
