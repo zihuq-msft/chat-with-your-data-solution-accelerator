@@ -24,6 +24,8 @@ from ..helpers.env_helper import EnvHelper
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
 from ..helpers.llm_helper import LLMHelper
+from ..helpers.config.config_helper import ConfigHelper
+from ..helpers.config.assistant_strategy import AssistantStrategy
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +54,10 @@ class AzureSearchIndex:
         return AzureSearchIndex._search_dimension
 
     def create_or_update_index(self):
+        config = ConfigHelper.get_active_config_or_default()
+        if config.prompts["ai_assistant_type"] == AssistantStrategy.RESEARCH_ASSISTANT.value:
+            return self.create_or_update_researcher_index()
+
         # Create a search index
         fields = [
             SimpleField(
@@ -165,12 +171,126 @@ class AzureSearchIndex:
             ],
         )
 
-    def get_semantic_search_config(self):
+    def get_semantic_search_config(self, field_name="content"):
         semantic_config = SemanticConfiguration(
             name=self.env_helper.AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG,
             prioritized_fields=SemanticPrioritizedFields(
-                content_fields=[SemanticField(field_name="content")]
+                content_fields=[SemanticField(field_name)]
             ),
         )
 
         return SemanticSearch(configurations=[semantic_config])
+
+    def create_or_update_researcher_index(self):
+        fields = [
+            SearchableField(
+                name="primary_investigator",
+                type=SearchFieldDataType.String,
+                filterable=False,
+                facetable=False,
+                sortable=False,
+            ),
+            SearchableField(
+                name="topic",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="id",
+                type=SearchFieldDataType.String,
+                key=True,
+                filterable=True,
+                sortable=True,
+                analyzer_name="keyword",
+            ),
+            SearchableField(
+                name="program_manager",
+                type=SearchFieldDataType.String,
+                filterable=True,
+                facetable=True,
+                sortable=True,
+                index_analyzer_name="keyword",
+                search_analyzer_name="keyword",
+            ),
+            SearchableField(
+                name="institution",
+                type=SearchFieldDataType.String,
+                filterable=True,
+                facetable=True,
+                sortable=True,
+                # TODO: Add analyzer
+            ),
+            SearchableField(
+                name="cluster",
+                type=SearchFieldDataType.String,
+                filterable=True,
+                facetable=True,
+                sortable=True,
+                index_analyzer_name="keyword",
+                search_analyzer_name="keyword",
+            ),
+            SearchableField(
+                name="abstract",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="Impact",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="Benchmark",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="Outcomes",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="Approach",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="Novelty",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="Domain",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="Task",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="Challenges",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="metadata",
+                type=SearchFieldDataType.String,
+            ),
+            SearchField(
+                name="content_vector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
+            ),
+            SearchableField(
+                name="source",
+                type=SearchFieldDataType.String,
+                filterable=True
+            ),
+        ]
+
+        vector_search = self.get_vector_search_config()
+
+        semantic_search = self.get_semantic_search_config(field_name="abstract")
+
+        index = SearchIndex(
+            name=self.env_helper.AZURE_SEARCH_INDEX,
+            fields=fields,
+            vector_search=vector_search,
+            semantic_search=semantic_search,
+        )
+        result = self.index_client.create_or_update_index(index)
+        logger.info(f"{result.name} researcher index created successfully.")
+        return result
