@@ -6,6 +6,7 @@ from ...integrated_vectorization.azure_search_indexer import AzureSearchIndexer
 from ...integrated_vectorization.azure_search_datasource import AzureSearchDatasource
 from ...integrated_vectorization.azure_search_skillset import AzureSearchSkillset
 from ..config.config_helper import ConfigHelper
+from ..config.assistant_strategy import AssistantStrategy
 import logging
 
 logger = logging.getLogger(__name__)
@@ -21,24 +22,47 @@ class IntegratedVectorizationEmbedder(EmbedderBase):
 
     def process_using_integrated_vectorization(self, source_url: str):
         config = ConfigHelper.get_active_config_or_default()
-        try:
-            search_datasource = AzureSearchDatasource(self.env_helper)
-            search_datasource.create_or_update_datasource()
-            search_index = AzureSearchIndex(self.env_helper, self.llm_helper)
-            search_index.create_or_update_index()
-            search_skillset = AzureSearchSkillset(
-                self.env_helper, config.integrated_vectorization_config
-            )
-            search_skillset_result = search_skillset.create_skillset()
-            search_indexer = AzureSearchIndexer(self.env_helper)
-            indexer_result = search_indexer.create_or_update_indexer(
-                self.env_helper.AZURE_SEARCH_INDEXER_NAME,
-                skillset_name=search_skillset_result.name,
-            )
-            return indexer_result
-        except Exception as e:
-            logger.error(f"Error processing {source_url}: {e}")
-            raise e
+        if (
+            self.get_active_ai_assitant_type()
+            == AssistantStrategy.RESEARCH_ASSISTANT.value
+        ):
+            try:
+                search_datasource = AzureSearchDatasource(self.env_helper)
+                search_datasource.create_or_update_datasource()
+                search_index = AzureSearchIndex(self.env_helper, self.llm_helper)
+                search_index.create_or_update_researcher_index()
+                search_skillset = AzureSearchSkillset(
+                    self.env_helper, config.integrated_vectorization_config
+                )
+                search_skillset_result = search_skillset.create_researcher_skillset()
+                search_indexer = AzureSearchIndexer(self.env_helper)
+                indexer_result = search_indexer.create_or_update_researcher_indexer(
+                    self.env_helper.AZURE_SEARCH_INDEXER_NAME,
+                    skillset_name=search_skillset_result.name,
+                )
+                return indexer_result
+            except Exception as e:
+                logger.error(f"Error processing {source_url}: {e}")
+                raise e
+        else:
+            try:
+                search_datasource = AzureSearchDatasource(self.env_helper)
+                search_datasource.create_or_update_datasource()
+                search_index = AzureSearchIndex(self.env_helper, self.llm_helper)
+                search_index.create_or_update_index()
+                search_skillset = AzureSearchSkillset(
+                    self.env_helper, config.integrated_vectorization_config
+                )
+                search_skillset_result = search_skillset.create_skillset()
+                search_indexer = AzureSearchIndexer(self.env_helper)
+                indexer_result = search_indexer.create_or_update_indexer(
+                    self.env_helper.AZURE_SEARCH_INDEXER_NAME,
+                    skillset_name=search_skillset_result.name,
+                )
+                return indexer_result
+            except Exception as e:
+                logger.error(f"Error processing {source_url}: {e}")
+                raise e
 
     def reprocess_all(self):
         search_indexer = AzureSearchIndexer(self.env_helper)
@@ -46,3 +70,7 @@ class IntegratedVectorizationEmbedder(EmbedderBase):
             search_indexer.run_indexer(self.env_helper.AZURE_SEARCH_INDEXER_NAME)
         else:
             self.process_using_integrated_vectorization(source_url="all")
+
+    def get_active_ai_assitant_type(self):
+        # Get the active ai assistant type from the config
+        return ConfigHelper.get_active_config_or_default().prompts.ai_assistant_type

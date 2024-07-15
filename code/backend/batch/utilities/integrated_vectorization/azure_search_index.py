@@ -55,7 +55,10 @@ class AzureSearchIndex:
 
     def create_or_update_index(self):
         config = ConfigHelper.get_active_config_or_default()
-        if config.prompts["ai_assistant_type"] == AssistantStrategy.RESEARCH_ASSISTANT.value:
+        if (
+            config.prompts["ai_assistant_type"]
+            == AssistantStrategy.RESEARCH_ASSISTANT.value
+        ):
             return self.create_or_update_researcher_index()
 
         # Create a search index
@@ -171,11 +174,41 @@ class AzureSearchIndex:
             ],
         )
 
-    def get_semantic_search_config(self, field_name="content"):
+    def get_semantic_search_config(self):
         semantic_config = SemanticConfiguration(
             name=self.env_helper.AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG,
             prioritized_fields=SemanticPrioritizedFields(
-                content_fields=[SemanticField(field_name)]
+                content_fields=[SemanticField(field_name="content")]
+            ),
+        )
+
+        return SemanticSearch(configurations=[semantic_config])
+
+    def get_semantic_search_researcher_config(self):
+        semantic_config = SemanticConfiguration(
+            name=self.env_helper.AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG,
+            prioritized_fields=SemanticPrioritizedFields(
+                title_field=SemanticField(field_name="topic"),
+                content_fields=[
+                    SemanticField(field_name="abstract"),
+                    SemanticField(field_name="Impact"),
+                    SemanticField(field_name="Benchmark"),
+                    SemanticField(field_name="Outcomes"),
+                    SemanticField(field_name="Approach"),
+                    SemanticField(field_name="Novelty"),
+                    SemanticField(field_name="Domain"),
+                    SemanticField(field_name="Task"),
+                    SemanticField(field_name="Challenges"),
+                ],
+                keywords_fields=[
+                    SemanticField(field_name="primary_investigator"),
+                    SemanticField(field_name="program_manager"),
+                    SemanticField(field_name="institution"),
+                    SemanticField(field_name="cluster"),
+                    SemanticField(field_name="Keywords"),
+                    SemanticField(field_name="metadata"),
+                    SemanticField(field_name="source"),
+                ],
             ),
         )
 
@@ -183,6 +216,9 @@ class AzureSearchIndex:
 
     def create_or_update_researcher_index(self):
         fields = [
+            SearchableField(
+                name="id", type=SearchFieldDataType.String, filterable=True
+            ),
             SearchableField(
                 name="primary_investigator",
                 type=SearchFieldDataType.String,
@@ -194,12 +230,13 @@ class AzureSearchIndex:
                 name="topic",
                 type=SearchFieldDataType.String,
             ),
-            SearchableField(
-                name="id",
+            SearchField(
+                name="proposal_id",
                 type=SearchFieldDataType.String,
                 key=True,
                 filterable=True,
                 sortable=True,
+                facetable=True,
                 analyzer_name="keyword",
             ),
             SearchableField(
@@ -264,26 +301,82 @@ class AzureSearchIndex:
                 name="Challenges",
                 type=SearchFieldDataType.String,
             ),
-            SearchableField(
-                name="metadata",
-                type=SearchFieldDataType.String,
+            SearchField(
+                name="Keywords",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
             ),
             SearchField(
-                name="content_vector",
+                name="abstract_vector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
+            ),
+            SearchField(
+                name="Impact_vector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
+            ),
+            SearchField(
+                name="Benchmark_vector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
+            ),
+            SearchField(
+                name="Outcomes_vector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
+            ),
+            SearchField(
+                name="Approach_vector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
+            ),
+            SearchField(
+                name="Novelty_vector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
+            ),
+            SearchField(
+                name="Domain_vector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
+            ),
+            SearchField(
+                name="Task_vector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
+            ),
+            SearchField(
+                name="Challenges_vector",
                 type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                 vector_search_dimensions=self.search_dimensions,
                 vector_search_profile_name="myHnswProfile",
             ),
             SearchableField(
-                name="source",
+                name="title",
                 type=SearchFieldDataType.String,
-                filterable=True
+                filterable=True,
+                facetable=True,
+            ),
+            SearchableField(
+                name="metadata",
+                type=SearchFieldDataType.String,
+            ),
+            SearchableField(
+                name="source", type=SearchFieldDataType.String, filterable=True
             ),
         ]
 
         vector_search = self.get_vector_search_config()
 
-        semantic_search = self.get_semantic_search_config(field_name="abstract")
+        semantic_search = self.get_semantic_search_researcher_config()
 
         index = SearchIndex(
             name=self.env_helper.AZURE_SEARCH_INDEX,
