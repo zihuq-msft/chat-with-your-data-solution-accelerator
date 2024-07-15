@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.28.1.47646",
-      "templateHash": "10368627789026861374"
+      "templateHash": "543774726595092683"
     }
   },
   "parameters": {
@@ -121,10 +121,17 @@
       }
     },
     "azureSearchTopK": {
-      "type": "string",
-      "defaultValue": "5",
+      "type": "int",
+      "defaultValue": 5,
       "metadata": {
         "description": "Top K results"
+      }
+    },
+    "azureSearchDimensions": {
+      "type": "int",
+      "defaultValue": 1536,
+      "metadata": {
+        "description": "Azure OpenAI Embeddings dimensions"
       }
     },
     "azureSearchEnableInDomain": {
@@ -2061,6 +2068,7 @@
               "AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG": "[parameters('azureSearchSemanticSearchConfig')]",
               "AZURE_SEARCH_INDEX_IS_PRECHUNKED": "[parameters('azureSearchIndexIsPrechunked')]",
               "AZURE_SEARCH_TOP_K": "[parameters('azureSearchTopK')]",
+              "AZURE_SEARCH_DIMENSIONS": "[parameters('azureSearchDimensions')]",
               "AZURE_SEARCH_ENABLE_IN_DOMAIN": "[parameters('azureSearchEnableInDomain')]",
               "AZURE_SEARCH_CONTENT_COLUMNS": "[parameters('azureSearchContentColumns')]",
               "AZURE_SEARCH_CONTENT_VECTOR_COLUMNS": "[parameters('azureSearchVectorColumns')]",
@@ -3018,6 +3026,7 @@
               "AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG": "[parameters('azureSearchSemanticSearchConfig')]",
               "AZURE_SEARCH_INDEX_IS_PRECHUNKED": "[parameters('azureSearchIndexIsPrechunked')]",
               "AZURE_SEARCH_TOP_K": "[parameters('azureSearchTopK')]",
+              "AZURE_SEARCH_DIMENSIONS": "[parameters('azureSearchDimensions')]",
               "AZURE_SEARCH_ENABLE_IN_DOMAIN": "[parameters('azureSearchEnableInDomain')]",
               "AZURE_SEARCH_CONTENT_COLUMNS": "[parameters('azureSearchContentColumns')]",
               "AZURE_SEARCH_CONTENT_VECTOR_COLUMNS": "[parameters('azureSearchVectorColumns')]",
@@ -3974,6 +3983,7 @@
               "AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG": "[parameters('azureSearchSemanticSearchConfig')]",
               "AZURE_SEARCH_INDEX_IS_PRECHUNKED": "[parameters('azureSearchIndexIsPrechunked')]",
               "AZURE_SEARCH_TOP_K": "[parameters('azureSearchTopK')]",
+              "AZURE_SEARCH_DIMENSIONS": "[parameters('azureSearchDimensions')]",
               "AZURE_SEARCH_ENABLE_IN_DOMAIN": "[parameters('azureSearchEnableInDomain')]",
               "AZURE_SEARCH_CONTENT_COLUMNS": "[parameters('azureSearchContentColumns')]",
               "AZURE_SEARCH_CONTENT_VECTOR_COLUMNS": "[parameters('azureSearchVectorColumns')]",
@@ -4920,6 +4930,7 @@
               "AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG": "[parameters('azureSearchSemanticSearchConfig')]",
               "AZURE_SEARCH_INDEX_IS_PRECHUNKED": "[parameters('azureSearchIndexIsPrechunked')]",
               "AZURE_SEARCH_TOP_K": "[parameters('azureSearchTopK')]",
+              "AZURE_SEARCH_DIMENSIONS": "[parameters('azureSearchDimensions')]",
               "AZURE_SEARCH_ENABLE_IN_DOMAIN": "[parameters('azureSearchEnableInDomain')]",
               "AZURE_SEARCH_CONTENT_COLUMNS": "[parameters('azureSearchContentColumns')]",
               "AZURE_SEARCH_CONTENT_VECTOR_COLUMNS": "[parameters('azureSearchVectorColumns')]",
@@ -7606,6 +7617,7 @@
               "AZURE_SEARCH_DATASOURCE_NAME": "[parameters('azureSearchDatasource')]",
               "AZURE_SEARCH_INDEXER_NAME": "[parameters('azureSearchIndexer')]",
               "AZURE_SEARCH_USE_INTEGRATED_VECTORIZATION": "[parameters('azureSearchUseIntegratedVectorization')]",
+              "AZURE_SEARCH_DIMENSIONS": "[parameters('azureSearchDimensions')]",
               "USE_ADVANCED_IMAGE_PROCESSING": "[parameters('useAdvancedImageProcessing')]",
               "DOCUMENT_PROCESSING_QUEUE_NAME": "[variables('queueName')]",
               "ORCHESTRATION_STRATEGY": "[parameters('orchestrationStrategy')]",
@@ -8845,6 +8857,7 @@
               "AZURE_SEARCH_DATASOURCE_NAME": "[parameters('azureSearchDatasource')]",
               "AZURE_SEARCH_INDEXER_NAME": "[parameters('azureSearchIndexer')]",
               "AZURE_SEARCH_USE_INTEGRATED_VECTORIZATION": "[parameters('azureSearchUseIntegratedVectorization')]",
+              "AZURE_SEARCH_DIMENSIONS": "[parameters('azureSearchDimensions')]",
               "USE_ADVANCED_IMAGE_PROCESSING": "[parameters('useAdvancedImageProcessing')]",
               "DOCUMENT_PROCESSING_QUEUE_NAME": "[variables('queueName')]",
               "ORCHESTRATION_STRATEGY": "[parameters('orchestrationStrategy')]",
@@ -11242,7 +11255,7 @@
       "value": "[parameters('azureSearchIndexIsPrechunked')]"
     },
     "AZURE_SEARCH_TOP_K": {
-      "type": "string",
+      "type": "int",
       "value": "[parameters('azureSearchTopK')]"
     },
     "AZURE_SEARCH_ENABLE_IN_DOMAIN": {

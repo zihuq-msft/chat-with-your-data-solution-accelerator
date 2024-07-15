@@ -1,3 +1,4 @@
+import ast
 import hashlib
 import json
 import logging
@@ -20,6 +21,7 @@ from ..document_chunking_helper import DocumentChunking
 from ...common.source_document import SourceDocument
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class PushEmbedder(EmbedderBase):
@@ -113,7 +115,22 @@ If the image is mostly text, use OCR to extract the text as it is displayed in t
         return caption
 
     def __convert_to_search_document(self, document: SourceDocument):
-        embedded_content = self.llm_helper.generate_embeddings(document.content)
+        try:
+            if ".json" in document.source:
+                content_metadata = ast.literal_eval(document.content)
+            embedded_content = self.llm_helper.generate_embeddings(document.content)
+        except Exception as e:
+            logger.error(
+                f"Failed to embed document with id {document.id} and source {document.source}"
+            )
+            logger.error(e)
+            # delete the document from the blob storage
+            # self.blob_client.delete_file(document.source)
+            pass
+
+        logger.debug(
+            f"Successfully embedded document with id {document.id} and source {document.source}"
+        )
         metadata = {
             "id": document.id,
             "source": document.source,
@@ -123,6 +140,7 @@ If the image is mostly text, use OCR to extract the text as it is displayed in t
             "page_number": document.page_number,
             "chunk_id": document.chunk_id,
         }
+        metadata.update(content_metadata["metadata"])
         return {
             "id": document.id,
             "content": document.content,

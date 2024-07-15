@@ -64,7 +64,10 @@ param azureSearchSemanticSearchConfig string = 'default'
 param azureSearchIndexIsPrechunked string = 'false'
 
 @description('Top K results')
-param azureSearchTopK string = '5'
+param azureSearchTopK int = 5
+
+@description('Azure OpenAI Embeddings dimensions')
+param azureSearchDimensions int = 1536
 
 @description('Enable in domain')
 param azureSearchEnableInDomain string = 'false'
@@ -556,6 +559,7 @@ module web './app/web.bicep' = if (hostingModel == 'code') {
       AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG: azureSearchSemanticSearchConfig
       AZURE_SEARCH_INDEX_IS_PRECHUNKED: azureSearchIndexIsPrechunked
       AZURE_SEARCH_TOP_K: azureSearchTopK
+      AZURE_SEARCH_DIMENSIONS: azureSearchDimensions
       AZURE_SEARCH_ENABLE_IN_DOMAIN: azureSearchEnableInDomain
       AZURE_SEARCH_CONTENT_COLUMNS: azureSearchContentColumns
       AZURE_SEARCH_CONTENT_VECTOR_COLUMNS: azureSearchVectorColumns
@@ -633,6 +637,7 @@ module web_docker './app/web.bicep' = if (hostingModel == 'container') {
       AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG: azureSearchSemanticSearchConfig
       AZURE_SEARCH_INDEX_IS_PRECHUNKED: azureSearchIndexIsPrechunked
       AZURE_SEARCH_TOP_K: azureSearchTopK
+      AZURE_SEARCH_DIMENSIONS: azureSearchDimensions
       AZURE_SEARCH_ENABLE_IN_DOMAIN: azureSearchEnableInDomain
       AZURE_SEARCH_CONTENT_COLUMNS: azureSearchContentColumns
       AZURE_SEARCH_CONTENT_VECTOR_COLUMNS: azureSearchVectorColumns
@@ -709,6 +714,7 @@ module adminweb './app/adminweb.bicep' = if (hostingModel == 'code') {
       AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG: azureSearchSemanticSearchConfig
       AZURE_SEARCH_INDEX_IS_PRECHUNKED: azureSearchIndexIsPrechunked
       AZURE_SEARCH_TOP_K: azureSearchTopK
+      AZURE_SEARCH_DIMENSIONS: azureSearchDimensions
       AZURE_SEARCH_ENABLE_IN_DOMAIN: azureSearchEnableInDomain
       AZURE_SEARCH_CONTENT_COLUMNS: azureSearchContentColumns
       AZURE_SEARCH_CONTENT_VECTOR_COLUMNS: azureSearchVectorColumns
@@ -784,6 +790,7 @@ module adminweb_docker './app/adminweb.bicep' = if (hostingModel == 'container')
       AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG: azureSearchSemanticSearchConfig
       AZURE_SEARCH_INDEX_IS_PRECHUNKED: azureSearchIndexIsPrechunked
       AZURE_SEARCH_TOP_K: azureSearchTopK
+      AZURE_SEARCH_DIMENSIONS: azureSearchDimensions
       AZURE_SEARCH_ENABLE_IN_DOMAIN: azureSearchEnableInDomain
       AZURE_SEARCH_CONTENT_COLUMNS: azureSearchContentColumns
       AZURE_SEARCH_CONTENT_VECTOR_COLUMNS: azureSearchVectorColumns
@@ -888,6 +895,7 @@ module function './app/function.bicep' = if (hostingModel == 'code') {
       AZURE_SEARCH_DATASOURCE_NAME: azureSearchDatasource
       AZURE_SEARCH_INDEXER_NAME: azureSearchIndexer
       AZURE_SEARCH_USE_INTEGRATED_VECTORIZATION: azureSearchUseIntegratedVectorization
+      AZURE_SEARCH_DIMENSIONS: azureSearchDimensions
       USE_ADVANCED_IMAGE_PROCESSING: useAdvancedImageProcessing
       DOCUMENT_PROCESSING_QUEUE_NAME: queueName
       ORCHESTRATION_STRATEGY: orchestrationStrategy
@@ -945,6 +953,7 @@ module function_docker './app/function.bicep' = if (hostingModel == 'container')
       AZURE_SEARCH_DATASOURCE_NAME: azureSearchDatasource
       AZURE_SEARCH_INDEXER_NAME: azureSearchIndexer
       AZURE_SEARCH_USE_INTEGRATED_VECTORIZATION: azureSearchUseIntegratedVectorization
+      AZURE_SEARCH_DIMENSIONS: azureSearchDimensions
       USE_ADVANCED_IMAGE_PROCESSING: useAdvancedImageProcessing
       DOCUMENT_PROCESSING_QUEUE_NAME: queueName
       ORCHESTRATION_STRATEGY: orchestrationStrategy
@@ -1120,7 +1129,7 @@ output AZURE_SEARCH_SERVICE string = search.outputs.endpoint
 output AZURE_SEARCH_USE_SEMANTIC_SEARCH bool = azureSearchUseSemanticSearch
 output AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG string = azureSearchSemanticSearchConfig
 output AZURE_SEARCH_INDEX_IS_PRECHUNKED string = azureSearchIndexIsPrechunked
-output AZURE_SEARCH_TOP_K string = azureSearchTopK
+output AZURE_SEARCH_TOP_K int = azureSearchTopK
 output AZURE_SEARCH_ENABLE_IN_DOMAIN string = azureSearchEnableInDomain
 output AZURE_SEARCH_CONTENT_COLUMNS string = azureSearchContentColumns
 output AZURE_SEARCH_CONTENT_VECTOR_COLUMNS string = azureSearchVectorColumns

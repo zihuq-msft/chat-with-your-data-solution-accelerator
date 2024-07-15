@@ -14,6 +14,13 @@ param hostingModel = readEnvironmentVariable('AZURE_APP_SERVICE_HOSTING_MODEL', 
 // Feature flags
 param azureSearchUseIntegratedVectorization = bool(readEnvironmentVariable('AZURE_SEARCH_USE_INTEGRATED_VECTORIZATION', 'false'))
 param azureSearchUseSemanticSearch = bool(readEnvironmentVariable('AZURE_SEARCH_USE_SEMANTIC_SEARCH', 'false'))
+param azureSearchContentColumns = readEnvironmentVariable('AZURE_SEARCH_CONTENT_COLUMNS', 'content')
+param azureSearchVectorColumns = readEnvironmentVariable('AZURE_SEARCH_CONTENT_VECTOR_COLUMNS', 'content_vector')
+param azureSearchFilenameColumn = readEnvironmentVariable('AZURE_SEARCH_FILENAME_COLUMN', 'filename')
+param azureSearchTitleColumn = readEnvironmentVariable('AZURE_SEARCH_TITLE_COLUMN', 'title')
+param azureSearchUrlColumn = readEnvironmentVariable('AZURE_SEARCH_URL_COLUMN', 'url')
+param azureSearchTopK = int(readEnvironmentVariable('AZURE_SEARCH_TOP_K', '5'))
+param azureSearchDimensions = int(readEnvironmentVariable('AZURE_SEARCH_DIMENSIONS', '1536'))
 param orchestrationStrategy = readEnvironmentVariable('ORCHESTRATION_STRATEGY', 'openai_function')
 param logLevel = readEnvironmentVariable('LOGLEVEL', 'INFO')
 param recognizedLanguages = readEnvironmentVariable('AZURE_SPEECH_RECOGNIZER_LANGUAGES', 'en-US,fr-FR,de-DE,it-IT')
