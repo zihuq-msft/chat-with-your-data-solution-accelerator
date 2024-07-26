@@ -6,10 +6,16 @@ from azure.search.documents.models import VectorizableTextQuery
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
 from ..common.source_document import SourceDocument
+from ..helpers.env_helper import EnvHelper
 import re
 
 
 class IntegratedVectorizationSearchHandler(SearchHandlerBase):
+
+    _env_helper = EnvHelper()
+    _CONTENT_COLUMNS = _env_helper.AZURE_SEARCH_CONTENT_COLUMNS.split("|")
+    _VECTOR_FIELD = _env_helper.AZURE_SEARCH_CONTENT_VECTOR_COLUMNS.split("|")
+
     def create_search_client(self):
         if self._check_index_exists():
             return SearchClient(
@@ -26,29 +32,54 @@ class IntegratedVectorizationSearchHandler(SearchHandlerBase):
         if self._check_index_exists():
             return self.search_client.search(
                 search_text="*",
-                select=["id", "chunk_id", "content"],
+                # select=["id", "chunk_id", "content"],
+                select=[
+                    " \
+                    id, \
+                    proposal_id, \
+                    ADO_ID, \
+                    program_manager, \
+                    cluster, \
+                    primary_investigator, \
+                    institution, \
+                    proposal_url, \
+                    topic, \
+                    abstract, \
+                    Impact, \
+                    Benchmark, \
+                    Outcomes, \
+                    Approach, \
+                    Novelty, \
+                    Domain, \
+                    Task, \
+                    Challenges, \
+                    Keywords \
+                    "
+                ],
                 filter=f"title eq '{filename}'",
             )
 
     def process_results(self, results):
         if results is None:
             return []
-        data = [
-            [re.findall(r"\d+", result["chunk_id"])[-1], result["content"]]
-            for result in results
-        ]
+        data = []
+        for result in results:
+            data.append(result)
+
         return data
 
     def get_files(self):
         if self._check_index_exists():
             return self.search_client.search(
-                "*", select="id, chunk_id, title", include_total_count=True
+                # "*", select="id, chunk_id, title", include_total_count=True
+                "*", select="id, proposal_id, title", include_total_count=True
             )
 
     def output_results(self, results):
         files = {}
         for result in results:
-            id = result["chunk_id"]
+            # id = result["chunk_id"]
+            id = result["proposal_id"]
             filename = result["title"]
             if filename in files:
                 files[filename].append(id)
@@ -62,7 +93,8 @@ class IntegratedVectorizationSearchHandler(SearchHandlerBase):
             title = blob_url.split(f"{self.env_helper.AZURE_BLOB_CONTAINER_NAME}/")[1]
             return self.search_client.search(
                 "*",
-                select="id, chunk_id, title",
+                # select="id, chunk_id, title",
+                select="id, proposal_id, title",
                 include_total_count=True,
                 filter=f"title eq '{title}'",
             )
@@ -73,7 +105,8 @@ class IntegratedVectorizationSearchHandler(SearchHandlerBase):
 
         for filename, ids in files.items():
             files_to_delete.append(filename)
-            ids_to_delete += [{"chunk_id": id} for id in ids]
+            # ids_to_delete += [{"chunk_id": id} for id in ids]
+            ids_to_delete += [{"proposal_id": id} for id in ids]
 
         self.search_client.delete_documents(ids_to_delete)
 
@@ -121,13 +154,16 @@ class IntegratedVectorizationSearchHandler(SearchHandlerBase):
     def _convert_to_source_documents(self, search_results) -> List[SourceDocument]:
         source_documents = []
         for source in search_results:
+            source_content = { k:v for k,v in source.items() if k in ["topic", "abstract", "Impact", "Benchmarks", "Outcomes", "Approach", "Novelty", "Domain", "Task", "Challenges"] }
             source_documents.append(
                 SourceDocument(
                     id=source.get("id"),
-                    content=source.get("content"),
+                    # content=source.get("content"),
+                    content=str(source_content),
                     title=source.get("title"),
                     source=self._extract_source_url(source.get("source")),
-                    chunk_id=source.get("chunk_id"),
+                    # chunk_id=source.get("chunk_id"),
+                    chunk_id=source.get("proposal_id"),
                 )
             )
         return source_documents

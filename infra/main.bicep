@@ -27,8 +27,10 @@ param hostingPlanName string = 'hosting-plan-${resourceToken}'
   'P2'
   'P3'
   'P4'
+  'P0v3'
 ])
 param hostingPlanSku string = 'B3'
+// param hostingPlanSku string = 'P0v3' // playing with values since we keep running into hosting plan limits
 
 @description('The sku tier for the App Service plan')
 @allowed([
@@ -39,8 +41,10 @@ param hostingPlanSku string = 'B3'
   'Premium'
   'PremiumV2'
   'PremiumV3'
+  'Premium0V3'
 ])
 param skuTier string = 'Basic'
+// param skuTier string = 'Premium0V3' // playing with values since we keep running into hosting plan limits
 
 @description('Name of Web App')
 param websiteName string = 'web-${resourceToken}'

@@ -47,8 +47,12 @@ try:
 
     results = search_handler.perform_search(filename)
     data = search_handler.process_results(results)
-    df = pd.DataFrame(data, columns=("Chunk", "Content")).sort_values(by=["Chunk"])
-    st.table(df)
+    data_keys = list(data[0].keys()) if data else []
+    # df = pd.DataFrame(data, columns=("Chunk", "Content")).sort_values(by=["Chunk"])
+    # df = pd.Series(data[0], index=data_keys)
+    # st.table(df)
+    # st.table(df).columns
+    st.write(data)
 
 
 except Exception:

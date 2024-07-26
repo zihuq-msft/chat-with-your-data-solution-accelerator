@@ -188,8 +188,9 @@ class AzureSearchIndex:
         semantic_config = SemanticConfiguration(
             name=self.env_helper.AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG,
             prioritized_fields=SemanticPrioritizedFields(
-                title_field=SemanticField(field_name="topic"),
+                title_field=SemanticField(field_name="title"),
                 content_fields=[
+                    SemanticField(field_name="topic"),
                     SemanticField(field_name="abstract"),
                     SemanticField(field_name="Impact"),
                     SemanticField(field_name="Benchmark"),
@@ -201,12 +202,12 @@ class AzureSearchIndex:
                     SemanticField(field_name="Challenges"),
                 ],
                 keywords_fields=[
-                    SemanticField(field_name="primary_investigator"),
-                    SemanticField(field_name="program_manager"),
-                    SemanticField(field_name="institution"),
                     SemanticField(field_name="cluster"),
+                    SemanticField(field_name="program_manager"),
+                    SemanticField(field_name="primary_investigator"),
+                    SemanticField(field_name="institution"),
                     SemanticField(field_name="Keywords"),
-                    SemanticField(field_name="metadata"),
+                    # SemanticField(field_name="metadata"),
                     SemanticField(field_name="source"),
                 ],
             ),
@@ -216,19 +217,19 @@ class AzureSearchIndex:
 
     def create_or_update_researcher_index(self):
         fields = [
-            SearchableField(
-                name="id", type=SearchFieldDataType.String, filterable=True
+            SimpleField(
+                name="id",
+                type=SearchFieldDataType.String,
+                filterable=True
             ),
-            SearchableField(
+            SearchField(
                 name="primary_investigator",
                 type=SearchFieldDataType.String,
                 filterable=False,
                 facetable=False,
                 sortable=False,
-            ),
-            SearchableField(
-                name="topic",
-                type=SearchFieldDataType.String,
+                index_analyzer_name="keyword",
+                search_analyzer_name="keyword",
             ),
             SearchField(
                 name="proposal_id",
@@ -239,7 +240,24 @@ class AzureSearchIndex:
                 facetable=True,
                 analyzer_name="keyword",
             ),
-            SearchableField(
+            SimpleField(
+                name="proposal_url",
+                type=SearchFieldDataType.String,
+            ),
+            SearchField(
+                name="ADO_ID",
+                type=SearchFieldDataType.String,
+                filterable=True,
+                facetable=True,
+                sortable=True,
+                index_analyzer_name="keyword",
+                search_analyzer_name="keyword",
+            ),
+            SimpleField(
+                name="ADO_API_URL",
+                type=SearchFieldDataType.String,
+            ),
+            SearchField(
                 name="program_manager",
                 type=SearchFieldDataType.String,
                 filterable=True,
@@ -254,9 +272,10 @@ class AzureSearchIndex:
                 filterable=True,
                 facetable=True,
                 sortable=True,
-                # TODO: Add analyzer
+                index_analyzer_name="keyword",
+                search_analyzer_name="keyword",
             ),
-            SearchableField(
+            SearchField(
                 name="cluster",
                 type=SearchFieldDataType.String,
                 filterable=True,
@@ -264,6 +283,10 @@ class AzureSearchIndex:
                 sortable=True,
                 index_analyzer_name="keyword",
                 search_analyzer_name="keyword",
+            ),
+            SearchableField(
+                name="topic",
+                type=SearchFieldDataType.String,
             ),
             SearchableField(
                 name="abstract",
@@ -301,9 +324,26 @@ class AzureSearchIndex:
                 name="Challenges",
                 type=SearchFieldDataType.String,
             ),
+            SearchableField(
+                name="has_publications",
+                type=SearchFieldDataType.Boolean,
+                filterable=True,
+                facetable=True,
+                sortable=True,
+            ),
+            SearchField(
+                name="publication_urls",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+            ),
             SearchField(
                 name="Keywords",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+            ),
+            SearchField(
+                name="topic_vector",
                 type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                vector_search_dimensions=self.search_dimensions,
+                vector_search_profile_name="myHnswProfile",
             ),
             SearchField(
                 name="abstract_vector",
@@ -365,12 +405,14 @@ class AzureSearchIndex:
                 filterable=True,
                 facetable=True,
             ),
+            # SearchableField(
+            #     name="metadata",
+            #     type=SearchFieldDataType.String,
+            # ),
             SearchableField(
-                name="metadata",
+                name="source",
                 type=SearchFieldDataType.String,
-            ),
-            SearchableField(
-                name="source", type=SearchFieldDataType.String, filterable=True
+                filterable=True
             ),
         ]
 

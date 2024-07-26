@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.28.1.47646",
-      "templateHash": "543774726595092683"
+      "templateHash": "1175837482206114481"
     }
   },
   "parameters": {
@@ -49,7 +49,8 @@
         "P1",
         "P2",
         "P3",
-        "P4"
+        "P4",
+        "P0v3"
       ],
       "metadata": {
         "description": "The pricing tier for the App Service plan"
@@ -65,7 +66,8 @@
         "Standard",
         "Premium",
         "PremiumV2",
-        "PremiumV3"
+        "PremiumV3",
+        "Premium0V3"
       ],
       "metadata": {
         "description": "The sku tier for the App Service plan"

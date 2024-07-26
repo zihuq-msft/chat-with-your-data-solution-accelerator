@@ -74,13 +74,37 @@ class AzureSearchIndexer:
                 }
             },
             field_mappings=[
+                # FieldMapping(
+                #     source_field_name="proposal_id",
+                #     target_field_name="proposal_id",
+                # ),
                 FieldMapping(
-                    source_field_name="title",
-                    target_field_name="title",
+                    source_field_name="proposal_url",
+                    target_field_name="proposal_url",
+                ),
+                FieldMapping(
+                    source_field_name="ADO_ID",
+                    target_field_name="ADO_ID",
+                ),
+                FieldMapping(
+                    source_field_name="ADO_API_URL",
+                    target_field_name="ADO_API_URL",
+                ),
+                FieldMapping(
+                    source_field_name="has_publications",
+                    target_field_name="has_publications",
+                ),
+                FieldMapping(
+                    source_field_name="publication_urls",
+                    target_field_name="publication_urls",
                 ),
                 FieldMapping(
                     source_field_name="metadata_storage_path",
                     target_field_name="source",
+                ),
+                FieldMapping(
+                    source_field_name="metadata_storage_name",
+                    target_field_name="title",
                 ),
                 FieldMapping(
                     source_field_name="primary_investigator",
@@ -99,6 +123,10 @@ class AzureSearchIndexer:
                     target_field_name="cluster",
                 ),
                 FieldMapping(
+                    source_field_name="topic",
+                    target_field_name="topic",
+                ),
+                FieldMapping(
                     source_field_name="abstract",
                     target_field_name="abstract",
                 ),
@@ -107,12 +135,76 @@ class AzureSearchIndexer:
                     target_field_name="Impact",
                 ),
                 FieldMapping(
+                    source_field_name="Benchmark",
+                    target_field_name="Benchmark",
+                ),
+                FieldMapping(
+                    source_field_name="Outcomes",
+                    target_field_name="Outcomes",
+                ),
+                FieldMapping(
+                    source_field_name="Approach",
+                    target_field_name="Approach",
+                ),
+                FieldMapping(
+                    source_field_name="Novelty",
+                    target_field_name="Novelty",
+                ),
+                FieldMapping(
+                    source_field_name="Domain",
+                    target_field_name="Domain",
+                ),
+                FieldMapping(
+                    source_field_name="Task",
+                    target_field_name="Task",
+                ),
+                FieldMapping(
+                    source_field_name="Challenges",
+                    target_field_name="Challenges",
+                ),
+                FieldMapping(
                     source_field_name="Keywords",
                     target_field_name="Keywords",
                 ),
                 FieldMapping(
+                    source_field_name="topic_vector",
+                    target_field_name="topic_vector",
+                ),
+                FieldMapping(
                     source_field_name="abstract_vector",
                     target_field_name="abstract_vector",
+                ),
+                FieldMapping(
+                    source_field_name="Impact_vector",
+                    target_field_name="Impact_vector",
+                ),
+                FieldMapping(
+                    source_field_name="Benchmark_vector",
+                    target_field_name="Benchmark_vector",
+                ),
+                FieldMapping(
+                    source_field_name="Outcomes_vector",
+                    target_field_name="Outcomes_vector",
+                ),
+                FieldMapping(
+                    source_field_name="Approach_vector",
+                    target_field_name="Approach_vector",
+                ),
+                FieldMapping(
+                    source_field_name="Novelty_vector",
+                    target_field_name="Novelty_vector",
+                ),
+                FieldMapping(
+                    source_field_name="Domain_vector",
+                    target_field_name="Domain_vector",
+                ),
+                FieldMapping(
+                    source_field_name="Task_vector",
+                    target_field_name="Task_vector",
+                ),
+                FieldMapping(
+                    source_field_name="Challenges_vector",
+                    target_field_name="Challenges_vector",
                 ),
             ],
         )
