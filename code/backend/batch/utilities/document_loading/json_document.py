@@ -27,24 +27,27 @@ class JsonDocumentSettings:
     class KeyType(Enum):
         CLUSTER = "Cluster Details"
         CONTENT = "Content Fields"
+        CONTENT_PUBLICATIONS = "Content Publications"
         SUMMARY = "Project Summary"
         PROGRAM_MANAGER = "Program Managers"
+        PUBLICATIONS = "Publications"
 
     def __init__(self) -> None:
         self._strict_keys = False
         self._valid_key_types = [x for x in self.KeyType]
         self._cluster_keys = [
-            "cluster_name",
-            "cluster_description",
-            "summary",
-            "outcomes",
-            "approach",
-            "Novelty",
-            "Challenges",
+            "name",
+            "description",
+            "research_questions",
+            "research_approach",
+            "key_takeaways",
+            "research_trends",
+            "executive_summary",
         ]
         self._cluster_metadata_keys = [
-            "afmr_cluster_url",
-            "afmr_proposals",
+            "document_type",
+            "afmr_url",
+            # "afmr_proposals", # Proposal IDs were updated to be ADO work item IDs, which the current data does not have
         ]
         self._content_keys = [
             "topic",
@@ -56,31 +59,48 @@ class JsonDocumentSettings:
             "Novelty",
             "Task",
             "Challenges",
+            "publications",
+        ]
+        self._content_publications_keys = [
+            "topic",
+            "research_questions",
+            "executive_summary",
         ]
         self._content_metadata_keys = [
+            "proposal_id",
             "program_manager",
             "primary_investigator",
             "institution",
             "cluster",
-            "Keywords",
+            "source_url",
+            "publications",
+        ]
+        self._content_publications_metadata_keys = [
+            "publication_url",
+            "publication_id",
+            "authors",
+            "publication_date",
         ]
         self._summary_keys = [
-            "afmr_program_summary",
-            "afmr_program_managers",
-            "afmr_clusters",
-            "afmr_program_goals",
+            "abstract",
+            "summary",
+            "program_managers",
+            "goals",
+            "research_questions",
+            "research_approach",
+            "key_takeaways",
+            "research_trends",
         ]
         self._summary_metadata_keys = [
             "abbreviations",
             "afmr_short_url",
             "afmr_url",
             "afmr_github_url",
-            "program_manager_count",
-            "cluster_count",
-            "proposal_count",
-            "primary_investigator_count",
-            "institution_count",
-            "afmr_program_goals_count",
+            "project_program_manager_count",
+            "project_cluster_count",
+            "project_proposal_count",
+            "project_primary_investigator_count",
+            "project_institution_count",
         ]
         self._program_manager_keys = [
             "full_name",
@@ -92,17 +112,36 @@ class JsonDocumentSettings:
             "proposal_count",
             "primary_investigator_count",
         ]
+        self._publications_keys = [
+            "topic",
+            "summary",
+            "research_questions",
+            "research_approach",
+            "research_takeaways",
+            "research_conclusion",
+            "executive_summary",
+            # "body", # This is a large field and should be excluded (seems to be causing issues)
+        ]
+        self._publications_metadata_keys = [
+            "source_url",
+            "authors",
+            "publication_date",
+        ]
         self._key_fields = {
             self.KeyType.CLUSTER: self._cluster_keys,
             self.KeyType.CONTENT: self._content_keys,
+            self.KeyType.CONTENT_PUBLICATIONS: self._content_publications_keys,
             self.KeyType.SUMMARY: self._summary_keys,
             self.KeyType.PROGRAM_MANAGER: self._program_manager_keys,
+            self.KeyType.PUBLICATIONS: self._publications_keys,
         }
         self._metadata_key_fields = {
             self.KeyType.CLUSTER: self._cluster_metadata_keys,
             self.KeyType.CONTENT: self._content_metadata_keys,
+            self.KeyType.CONTENT_PUBLICATIONS: self._content_publications_metadata_keys,
             self.KeyType.SUMMARY: self._summary_metadata_keys,
             self.KeyType.PROGRAM_MANAGER: self._program_manager_metadata_keys,
+            self.KeyType.PUBLICATIONS: self._publications_metadata_keys,
         }
 
     def get_strict_keys(self) -> bool:
@@ -144,12 +183,14 @@ class JsonDocumentLoading(DocumentLoadingBase):
         return source_documents
 
     def _get_json_document_type(self) -> JsonDocumentSettings.KeyType:
-        if "_cluster" in self.document_url:
+        if "_cluster_info.json" in self.document_url:
             return JsonDocumentSettings.KeyType.CLUSTER
-        elif "_summary" in self.document_url:
+        elif "afmr_summary2.json" in self.document_url:
             return JsonDocumentSettings.KeyType.SUMMARY
-        elif "_pm" in self.document_url:
+        elif "_pm.json" in self.document_url:
             return JsonDocumentSettings.KeyType.PROGRAM_MANAGER
+        elif "_pub.json" in self.document_url:
+            return JsonDocumentSettings.KeyType.PUBLICATIONS
         else:
             return JsonDocumentSettings.KeyType.CONTENT
 
@@ -157,6 +198,56 @@ class JsonDocumentLoading(DocumentLoadingBase):
         response = requests.get(self.document_url)
         file = BytesIO(response.content).getvalue()
         return file
+
+    def _get_content_publications(self, data_dict: dict, return_dict: dict):
+        publications = data_dict.get("publications")
+        if publications == []:
+            return_dict["content"]["publications"] = []
+            return
+        if publications is None and self.settings.get_strict_keys():
+            raise ValueError(
+                f"JSON file at path {self.document_url} must contain the field 'publications'"
+            )
+        publication_data = []
+        for publication in publications:
+            publication_dict = {}
+            keys = self.settings.get_key_fields(
+                JsonDocumentSettings.KeyType.CONTENT_PUBLICATIONS
+            )
+            for k in keys:
+                value = publication.get(k)
+                if value is None and self.settings.get_strict_keys():
+                    raise ValueError(
+                        f"JSON file at path {self.document_url} must contain the field '{k}'"
+                    )
+                publication_dict[k] = value
+            publication_data.append(publication_dict)
+        return_dict["content"]["publications"] = publication_data
+
+    def _get_content_publications_metadata(self, data_dict: dict, return_dict: dict):
+        publications = data_dict.get("publications")
+        if publications == []:
+            return_dict["metadata"]["publications"] = []
+            return
+        if publications is None and self.settings.get_strict_keys():
+            raise ValueError(
+                f"JSON file at path {self.document_url} must contain the field 'publications'"
+            )
+        publication_data = []
+        for publication in publications:
+            publication_dict = {}
+            keys = self.settings.get_metadata_key_fields(
+                JsonDocumentSettings.KeyType.CONTENT_PUBLICATIONS
+            )
+            for k in keys:
+                value = publication.get(k)
+                if value is None and self.settings.get_strict_keys():
+                    raise ValueError(
+                        f"JSON file at path {self.document_url} must contain the field '{k}'"
+                    )
+                publication_dict[k] = value
+            publication_data.append(publication_dict)
+        return_dict["metadata"]["publications"] = publication_data
 
     def _load_schema_from_dict(self, data_dict: dict) -> str:
         return_dict = {
@@ -168,6 +259,9 @@ class JsonDocumentLoading(DocumentLoadingBase):
         metadata_keys = self.settings.get_metadata_key_fields(keyType)
 
         for k in keys:
+            if k == "publications":
+                self._get_content_publications(data_dict, return_dict)
+                continue
             value = data_dict.get(k)
             if value is None and self.settings.get_strict_keys():
                 raise ValueError(
@@ -176,6 +270,9 @@ class JsonDocumentLoading(DocumentLoadingBase):
             return_dict["content"][k] = value
 
         for t in metadata_keys:
+            if t == "publications":
+                self._get_content_publications(data_dict, return_dict)
+                continue
             value = data_dict.get(t)
             if value is None and self.settings.get_strict_keys():
                 raise ValueError(

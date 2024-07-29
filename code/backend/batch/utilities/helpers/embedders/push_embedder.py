@@ -125,8 +125,7 @@ If the image is mostly text, use OCR to extract the text as it is displayed in t
             )
             logger.error(e)
             # delete the document from the blob storage
-            # self.blob_client.delete_file(document.source)
-            pass
+            self.blob_client.delete_file(document.source)
 
         logger.debug(
             f"Successfully embedded document with id {document.id} and source {document.source}"
