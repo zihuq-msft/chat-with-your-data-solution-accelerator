@@ -15,6 +15,7 @@ class StructuredDocumentChunking(DocumentChunkingBase):
             list(map(lambda document: document.content, documents))
         )
         document_url = documents[0].source
+        document_researcher_metadata = documents[0].researcher_metadata
         splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
             chunk_size=chunking.chunk_size, chunk_overlap=chunking.chunk_overlap
         )
@@ -27,6 +28,7 @@ class StructuredDocumentChunking(DocumentChunkingBase):
                 SourceDocument.from_metadata(
                     content=chunked_content,
                     document_url=document_url,
+                    researcher_metadata=document_researcher_metadata,
                     metadata={"offset": chunk_offset},
                     idx=idx,
                 )

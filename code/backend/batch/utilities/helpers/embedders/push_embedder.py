@@ -115,21 +115,8 @@ If the image is mostly text, use OCR to extract the text as it is displayed in t
         return caption
 
     def __convert_to_search_document(self, document: SourceDocument):
-        try:
-            if ".json" in document.source:
-                content_metadata = ast.literal_eval(document.content)
-            embedded_content = self.llm_helper.generate_embeddings(document.content)
-        except Exception as e:
-            logger.error(
-                f"Failed to embed document with id {document.id} and source {document.source}"
-            )
-            logger.error(e)
-            # delete the document from the blob storage
-            self.blob_client.delete_file(document.source)
-
-        logger.debug(
-            f"Successfully embedded document with id {document.id} and source {document.source}"
-        )
+        embedded_content = self.llm_helper.buffered_generate_embeddings(document.content)
+        researcher_metadata = document.researcher_metadata
         metadata = {
             "id": document.id,
             "source": document.source,
@@ -139,12 +126,13 @@ If the image is mostly text, use OCR to extract the text as it is displayed in t
             "page_number": document.page_number,
             "chunk_id": document.chunk_id,
         }
-        metadata.update(content_metadata["metadata"])
+        metadata.update(researcher_metadata)
+        metadata = json.dumps(metadata)
         return {
             "id": document.id,
             "content": document.content,
             "content_vector": embedded_content,
-            "metadata": json.dumps(metadata),
+            "metadata": metadata,
             "title": document.title,
             "source": document.source,
             "chunk": document.chunk,

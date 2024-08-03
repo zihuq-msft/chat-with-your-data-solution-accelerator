@@ -69,11 +69,13 @@ class JsonDocumentSettings:
         self._content_metadata_keys = [
             "proposal_id",
             "program_manager",
+            "MSRResearchers"
             "primary_investigator",
             "institution",
             "cluster",
             "source_url",
             "publications",
+            "ADO_Last_Updated"
         ]
         self._content_publications_metadata_keys = [
             "publication_url",
@@ -176,6 +178,7 @@ class JsonDocumentLoading(DocumentLoadingBase):
         source_documents: List[SourceDocument] = [
             SourceDocument(
                 content=document.page_content,
+                researcher_metadata=document.metadata,
                 source=self.document_url,
             )
             for document in documents

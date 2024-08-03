@@ -12,6 +12,7 @@ class SourceDocument:
         source: str,
         id: Optional[str] = None,
         title: Optional[str] = None,
+        researcher_metadata: Optional[dict] = None,
         chunk: Optional[int] = None,
         offset: Optional[int] = None,
         page_number: Optional[int] = None,
@@ -21,13 +22,14 @@ class SourceDocument:
         self.content = content
         self.source = source
         self.title = title
+        self.researcher_metadata = researcher_metadata
         self.chunk = chunk
         self.offset = offset
         self.page_number = page_number
         self.chunk_id = chunk_id
 
     def __str__(self):
-        return f"SourceDocument(id={self.id}, title={self.title}, source={self.source}, chunk={self.chunk}, offset={self.offset}, page_number={self.page_number}, chunk_id={self.chunk_id})"
+        return f"SourceDocument(id={self.id}, title={self.title}, researcher_metadata={self.researcher_metadata} source={self.source}, chunk={self.chunk}, offset={self.offset}, page_number={self.page_number}, chunk_id={self.chunk_id})"
 
     def __eq__(self, other):
         if isinstance(self, other.__class__):
@@ -36,6 +38,7 @@ class SourceDocument:
                 and self.content == other.content
                 and self.source == other.source
                 and self.title == other.title
+                and self.researcher_metadata == other.researcher_metadata
                 and self.chunk == other.chunk
                 and self.offset == other.offset
                 and self.page_number == other.page_number
@@ -57,6 +60,7 @@ class SourceDocument:
             dict_obj["content"],
             dict_obj["source"],
             dict_obj["title"],
+            dict_obj["researcher_metadata"],
             dict_obj["chunk"],
             dict_obj["offset"],
             dict_obj["page_number"],
@@ -68,6 +72,7 @@ class SourceDocument:
         cls: Type["SourceDocument"],
         content: str,
         metadata: dict,
+        researcher_metadata: Optional[dict],
         document_url: Optional[str],
         idx: Optional[int],
     ) -> "SourceDocument":
@@ -87,6 +92,7 @@ class SourceDocument:
             content=content,
             source=metadata.get("source", f"{file_url}{sas_placeholder}"),
             title=metadata.get("title", filename),
+            researcher_metadata=researcher_metadata,
             chunk=metadata.get("chunk", idx),
             offset=metadata.get("offset"),
             page_number=metadata.get("page_number"),
@@ -120,6 +126,7 @@ class SourceDocumentEncoder(json.JSONEncoder):
                 "content": obj.content,
                 "source": obj.source,
                 "title": obj.title,
+                "researcher_metadata": obj.researcher_metadata,
                 "chunk": obj.chunk,
                 "offset": obj.offset,
                 "page_number": obj.page_number,
@@ -136,6 +143,7 @@ class SourceDocumentDecoder(json.JSONDecoder):
             content=obj["content"],
             source=obj["source"],
             title=obj["title"],
+            researcher_metadata=obj["researcher_metadata"],
             chunk=obj["chunk"],
             offset=obj["offset"],
             page_number=obj["page_number"],

@@ -9,6 +9,14 @@
             "preLaunchTask": "func: host start"
         },
         {
+            "name": "Attach to Python Functions (not justMyCode)",
+            "type": "python",
+            "request": "attach",
+            "port": 9091,
+            "preLaunchTask": "func: host start",
+            "justMyCode": false
+        },
+        {
             "name": "Launch Admin site",
             "type": "debugpy",
             "request": "launch",

@@ -9,6 +9,7 @@ from semantic_kernel.connectors.ai.open_ai.prompt_execution_settings.azure_chat_
 from azure.ai.ml import MLClient
 from azure.identity import DefaultAzureCredential
 from .env_helper import EnvHelper
+from openai.types.create_embedding_response import CreateEmbeddingResponse
 
 
 class LLMHelper:
@@ -70,6 +71,7 @@ class LLMHelper:
                 temperature=0,
                 max_tokens=self.llm_max_tokens,
                 openai_api_version=self.openai_client._api_version,
+                stream_options={"include_usage": True},
             )
         else:
             return AzureChatOpenAI(
@@ -82,6 +84,7 @@ class LLMHelper:
                 max_tokens=self.llm_max_tokens,
                 openai_api_version=self.openai_client._api_version,
                 azure_ad_token_provider=self.token_provider,
+                stream_options={"include_usage": True},
             )
 
     def get_embedding_model(self):
@@ -166,3 +169,17 @@ class LLMHelper:
                 self.env_helper.AZURE_ML_WORKSPACE_NAME,
             )
         return self._ml_client
+
+    def buffered_generate_embeddings(self, input: Union[str, list[int]]) -> List[float]:
+        try:
+            # print the token count for debugging purposes
+            print(f"Token count: {len(input.split())}")
+            response: CreateEmbeddingResponse = self.openai_client.embeddings.create(
+                input=[input], model=self.embedding_model
+            ).data[0].embedding
+
+            return response
+        except Exception as e:
+            print(response.__dict__)
+            print(f"Failed to embed document with input {input}")
+            raise e
