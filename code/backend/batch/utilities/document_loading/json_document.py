@@ -69,7 +69,7 @@ class JsonDocumentSettings:
         self._content_metadata_keys = [
             "proposal_id",
             "program_manager",
-            "MSRResearchers"
+            "MSRResearchers",
             "primary_investigator",
             "institution",
             "cluster",
